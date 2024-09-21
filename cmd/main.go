@@ -28,7 +28,7 @@ type Link struct {
 
 func newLink(url string) Link {
   return Link {
-    Url: url
+    Url: url,
   }
 }
 
@@ -41,7 +41,7 @@ func newData() Data {
     Links: []Link {
       newLink("www.google.com"),
       newLink("www.hackernews.com"),
-    }
+    },
   }
 }
 
@@ -60,9 +60,13 @@ func main() {
   e.POST("/links", func(c echo.Context) error {
     l := newLink(c.FormValue("url"))
     data.Links = append(data.Links, l)
-    return c.Render(200, "index", data)
+    return c.Render(200, "list-webpages", data)
   })
 
   e.Logger.Fatal(e.Start(":8080"))
 }
+
+// TODOS
+// - clear input after url is saved
+// - get name of website and use that for display value
 

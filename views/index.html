@@ -24,24 +24,23 @@
       Hello world!
     </h1>
     {{ template "save-webpage" . }}
-    <div></div>
     {{ template "list-webpages" . }}
   </body>
 </html>
 {{ end  }}
 
 {{ block "save-webpage" . }}
-<form hx-post="/links">
+<form hx-post="/links" hx-target="#list">
   <input type="text" name="url" />
   <button type="submit">save link</button>
 </form>
 {{ end }}
 
 {{ block "list-webpages" . }}
-<div>
+<div id="list">
   {{ range .Links }}
     <div>
-      <a href="{{ .Url }}">{{ .Url }}</a>
+      <a href="{{ .Url }}" target="_blank">{{ .Url }}</a>
     </div>
   {{ end }}
 </div>
