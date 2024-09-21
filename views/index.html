@@ -1,5 +1,4 @@
 {{ block "index" .  }}
-
 <!DOCTYPE html>
 <html language="en">
   <head>
@@ -10,10 +9,13 @@
     <script src="https://unpkg.com/htmx.org@2.0.2"></script>
   </head>
   <body>
-    count {{ .Count }}
-    <button hx-post="/count" hx-target="body">++</button>
+    <div id="count">{{ template "count" . }}</div>
+    <button hx-post="/count" hx-target="#count">++</button>
   </body>
 </html>
-
 {{ end  }}
+
+{{ block "count" . }}
+    count {{ .Count }}
+{{ end }}
 
