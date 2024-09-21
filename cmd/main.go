@@ -38,6 +38,6 @@ func main() {
     return c.Render(200, "index", count)
   })
 
-  e.Logger.Fatal(e.Start("8080"))
+  e.Logger.Fatal(e.Start(":8080"))
 }
 
