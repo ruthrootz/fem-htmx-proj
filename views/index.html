@@ -32,7 +32,7 @@
 
 {{ block "save-webpage" . }}
 <form hx-post="/links">
-  <input type="text" name="link" value="{{ .Link }}" />
+  <input type="text" name="url" />
   <button type="submit">save link</button>
 </form>
 {{ end }}
@@ -41,7 +41,7 @@
 <div>
   {{ range .Links }}
     <div>
-      <a href="{{ .Link }}">{{ .Link }}</a>
+      <a href="{{ .Url }}">{{ .Url }}</a>
     </div>
   {{ end }}
 </div>

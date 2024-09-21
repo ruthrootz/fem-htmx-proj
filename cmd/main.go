@@ -22,8 +22,27 @@ func newTemplate() *Templates {
   }
 }
 
-type Count struct {
-  Count int
+type Link struct {
+  Url string
+}
+
+func newLink(url string) Link {
+  return Link {
+    Url: link
+  }
+}
+
+type Data struct {
+  Links []Link
+}
+
+func newData() Data {
+  return Data {
+    Links: []Link {
+      newLink("www.google.com"),
+      newLink("www.hackernews.com"),
+    }
+  }
 }
 
 func main() {
@@ -31,16 +50,17 @@ func main() {
   e.Use(middleware.Logger())
   e.Renderer = newTemplate()
 
-  count := Count { Count: 0 }
+  data := newData()
 
   e.GET("/", func(c echo.Context) error {
     // "index" refers to the block that I named "index" in the index.html file
-    return c.Render(200, "index", count)
+    return c.Render(200, "index", data)
   })
 
-  e.POST("/count", func(c echo.Context) error {
-    count.Count++
-    return c.Render(200, "count", count)
+  e.POST("/links", func(c echo.Context) error {
+    l := newLink(c.FormValue("url"))
+    data.Links = append(data.Links, l)
+    return c.Render(200, "index", data)
   })
 
   e.Logger.Fatal(e.Start(":8080"))
