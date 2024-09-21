@@ -28,7 +28,7 @@ type Link struct {
 
 func newLink(url string) Link {
   return Link {
-    Url: link
+    Url: url
   }
 }
 
