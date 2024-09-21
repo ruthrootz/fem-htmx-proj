@@ -32,9 +32,14 @@ func main() {
   e.Renderer = newTemplate()
 
   count := Count { Count: 0 }
+
   e.GET("/", func(c echo.Context) error {
-    count.Count++
     // "index" refers to the block that I named "index" in the index.html file
+    return c.Render(200, "index", count)
+  })
+
+  e.POST("/count", func(c echo.Context) error {
+    count.Count++
     return c.Render(200, "index", count)
   })
 
