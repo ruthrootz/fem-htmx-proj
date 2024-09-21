@@ -23,13 +23,27 @@
     <h1 class="text-3xl font-bold underline text-clifford">
       Hello world!
     </h1>
-    <div id="count">{{ template "count" . }}</div>
-    <button hx-post="/count" hx-target="#count">++</button>
+    {{ template "save-webpage" . }}
+    <div></div>
+    {{ template "list-webpages" . }}
   </body>
 </html>
 {{ end  }}
 
-{{ block "count" . }}
-    count {{ .Count }}
+{{ block "save-webpage" . }}
+<form hx-post="/links">
+  <input type="text" name="link" value="{{ .Link }}" />
+  <button type="submit">save link</button>
+</form>
+{{ end }}
+
+{{ block "list-webpages" . }}
+<div>
+  {{ range .Links }}
+    <div>
+      <a href="{{ .Link }}">{{ .Link }}</a>
+    </div>
+  {{ end }}
+</div>
 {{ end }}
 
