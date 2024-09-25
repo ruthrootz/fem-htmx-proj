@@ -68,5 +68,6 @@ func main() {
 
 // TODOS
 // - clear input after url is saved
+// - add "https://" if it's not part of the saved string
 // - get name of website and use that for display value
 
