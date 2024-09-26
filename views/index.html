@@ -6,21 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://unpkg.com/htmx.org@2.0.2"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              clifford: "#da373d",
-            },
-          },
-        },
-      }
-    </script>
+    <script type="module" src="https://early.webawesome.com/webawesome@3.0.0-alpha.4/dist/webawesome.loader.js"></script>
+    <link rel="stylesheet" href="https://early.webawesome.com/webawesome@3.0.0-alpha.4/dist/themes/default.css" />
   </head>
   <body>
-    <h1 class="text-3xl font-bold underline text-clifford">
+    <h1>
       Hello world!
     </h1>
     {{ template "save-webpage" . }}
@@ -33,6 +23,7 @@
 <form hx-post="/links" hx-target="#list">
   <input type="text" name="url" />
   <button type="submit">save link</button>
+  <wa-button size="small">Click me</wa-button>
 </form>
 {{ end }}
 
