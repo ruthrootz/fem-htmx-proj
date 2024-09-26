@@ -1,6 +1,6 @@
 {{ block "index" .  }}
 <!DOCTYPE html>
-<html language="en">
+<html language="en" class="wa-theme-default-dark">
   <head>
     <title></title>
     <meta charset="UTF-8">
@@ -21,9 +21,8 @@
 
 {{ block "save-webpage" . }}
 <form hx-post="/links" hx-target="#list">
-  <input type="text" name="url" />
-  <button type="submit">save link</button>
-  <wa-button size="small">Click me</wa-button>
+  <wa-input type="text" name="url"></wa-input>
+  <wa-button type="submit">save link</wa-button>
 </form>
 {{ end }}
 

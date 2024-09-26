@@ -70,4 +70,8 @@ func main() {
 // - clear input after url is saved
 // - add "https://" if it's not part of the saved string
 // - get name of website and use that for display value
+// - add padding
+// - change to mono font
+// - add form to card, center it
+// - add list to card, center it
 
