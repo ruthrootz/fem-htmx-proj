@@ -48,6 +48,9 @@ func newData() Data {
 
 func main() {
   e := echo.New()
+  e.Use(middleware.StaticWithConfig(middleware.StaticConfig {
+    Root:   "static",
+  }))
   e.Use(middleware.Logger())
   e.Renderer = newTemplate()
 
@@ -74,7 +77,6 @@ func main() {
 
 // TODOS
 // - add padding
-// - change to mono font
 // - add form to card, center it
 // - add list to card, center it
 // - get name of website and use that for display value
