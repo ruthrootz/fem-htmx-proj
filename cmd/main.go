@@ -76,8 +76,8 @@ func main() {
 }
 
 // TODOS
+// - center card and make it the size of the viewport
+// - center heading, input, list
 // - add padding
-// - add form to card, center it
-// - add list to card, center it
 // - get name of website and use that for display value
 
