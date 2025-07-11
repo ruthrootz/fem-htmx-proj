@@ -75,7 +75,7 @@ func main() {
   e.Logger.Fatal(e.Start(":8080"))
 }
 
-// TODOS
+// TODO:
 // - center card and make it the size of the viewport
 // - center heading, input, list
 // - add padding
