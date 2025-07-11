@@ -80,4 +80,5 @@ func main() {
 // - center heading, input, list
 // - add padding
 // - get name of website and use that for display value
+// - add favicon
 
