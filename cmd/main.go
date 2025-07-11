@@ -3,6 +3,7 @@ package main
 import (
   "html/template"
   "io"
+  "strings"
 
   "github.com/labstack/echo/v4"
   "github.com/labstack/echo/v4/middleware"
@@ -39,8 +40,8 @@ type Data struct {
 func newData() Data {
   return Data {
     Links: []Link {
-      newLink("www.google.com"),
-      newLink("www.hackernews.com"),
+      newLink("https://google.com"),
+      newLink("https://hackernews.com"),
     },
   }
 }
@@ -58,7 +59,12 @@ func main() {
   })
 
   e.POST("/links", func(c echo.Context) error {
-    l := newLink(c.FormValue("url"))
+    l := Link {}
+    if !strings.HasPrefix(c.FormValue("url"), "https://") {
+      l = newLink("https://" + c.FormValue("url"))
+    } else {
+      l = newLink(c.FormValue("url"))
+    }
     data.Links = append(data.Links, l)
     return c.Render(200, "list-webpages", data)
   })
@@ -67,10 +73,9 @@ func main() {
 }
 
 // TODOS
-// - add "https://" if it's not part of the saved string
-// - get name of website and use that for display value
 // - add padding
 // - change to mono font
 // - add form to card, center it
 // - add list to card, center it
+// - get name of website and use that for display value
 
