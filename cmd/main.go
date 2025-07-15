@@ -25,11 +25,51 @@ func newTemplate() *Templates {
 
 type Link struct {
   Url string
+  PageName string
+}
+
+func GetPageTitle(url string) (string, error) {
+  resp, err := http.Get(url)
+  if err != nil {
+    return "", fmt.Errorf("failed to make HTTP request: %w", err)
+  }
+  defer resp.Body.Close()
+  if resp.StatusCode != http.StatusOK {
+    return "", fmt.Errorf("received non-OK HTTP status: %d", resp.StatusCode)
+  }
+  doc, err := html.Parse(resp.Body)
+  if err != nil {
+    return "", fmt.Errorf("failed to parse HTML: %w", err)
+  }
+  var title string
+  var f func(*html.Node)
+  f = func(n *html.Node) {
+    if n.Type == html.ElementNode && n.Data == "title" {
+      if n.FirstChild != nil {
+        title = n.FirstChild.Data
+      }
+      return // Found the title, no need to continue traversing
+    }
+    for c := n.FirstChild; c != nil; c = c.NextSibling {
+      f(c)
+    }
+  }
+  f(doc)
+  return strings.TrimSpace(title), nil
 }
 
 func newLink(url string) Link {
+  title, err := GetPageTitle(url)
+  if err != nil {
+    fmt.Printf("error getting page title: %v\n", err)
+    return Link {
+      Url: url,
+      Title: url,
+    }
+  }
   return Link {
     Url: url,
+    Title: title,
   }
 }
 
@@ -62,13 +102,14 @@ func main() {
   })
 
   e.POST("/links", func(c echo.Context) error {
-    l := Link {}
-    if !strings.HasPrefix(c.FormValue("url"), "https://") {
-      l = newLink("https://" + c.FormValue("url"))
-    } else {
-      l = newLink(c.FormValue("url"))
-    }
-    data.Links = append(data.Links, l)
+    url := c.FormValue("url")
+    //if !strings.HasPrefix(url, "https://") {
+      //url = "https://" + url
+    //}
+    //if !strings.Contains(url, ".") {
+      //url = url + ".com"
+    //}
+    data.Links = append(data.Links, newLink(url))
     return c.Render(200, "list-webpages", data)
   })
 
@@ -76,8 +117,5 @@ func main() {
 }
 
 // TODO:
-// - center card and make it the size of the viewport
-// - center heading, input, list
-// - add padding
 // - get name of website and use that for display value
 
