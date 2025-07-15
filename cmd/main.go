@@ -127,7 +127,7 @@ func main() {
   dbUrl := "libsql://[DATABASE].turso.io?authToken=[TOKEN]"
   db, err := sql.Open("libsql", dbUrl)
   if err != nil {
-    fmt.Fprintf(os.Stderr, "failed to open db %s: %s", url, err)
+    fmt.Fprintf(os.Stderr, "failed to open db %s: %s", dbUrl, err)
     os.Exit(1)
   }
   defer db.Close()
