@@ -114,7 +114,7 @@ func main() {
 }
 
 // TODO:
-// - [ ] create Turso DB
+// - [x] create Turso DB
 // - [ ] link project to Turso
 // - [ ] save Links to DB
 // - [ ] add X to each list item
