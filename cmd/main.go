@@ -6,7 +6,10 @@ import (
   "html/template"
   "net/http"
   "strings"
+  "database/sql"
+  "os"
 
+  _ "github.com/tursodatabase/libsql-client-go/libsql"
   "golang.org/x/net/html"
   "github.com/labstack/echo/v4"
   "github.com/labstack/echo/v4/middleware"
@@ -27,6 +30,7 @@ func newTemplate() *Templates {
 }
 
 type Link struct {
+  ID int
   Url string
   Title string
 }
@@ -89,6 +93,28 @@ func newData() Data {
   }
 }
 
+func queryLinks(db *sql.DB)  {
+  rows, err := db.Query("SELECT * FROM link")
+  if err != nil {
+    fmt.Fprintf(os.Stderr, "failed to execute query: %v\n", err)
+    os.Exit(1)
+  }
+  defer rows.Close()
+  var links []Link
+  for rows.Next() {
+    var link Link
+    if err := rows.Scan(&link.ID, &link.Url); err != nil {
+      fmt.Println("error scanning row:", err)
+      return
+    }
+    links = append(links, link)
+    fmt.Println(link.ID, link.Url)
+  }
+  if err := rows.Err(); err != nil {
+    fmt.Println("error during rows iteration:", err)
+  }
+}
+
 func main() {
   e := echo.New()
   e.Use(middleware.StaticWithConfig(middleware.StaticConfig {
@@ -98,6 +124,14 @@ func main() {
   e.Renderer = newTemplate()
 
   data := newData()
+  dbUrl := "libsql://[DATABASE].turso.io?authToken=[TOKEN]"
+  db, err := sql.Open("libsql", dbUrl)
+  if err != nil {
+    fmt.Fprintf(os.Stderr, "failed to open db %s: %s", url, err)
+    os.Exit(1)
+  }
+  defer db.Close()
+  queryLinks(db)
 
   e.GET("/", func(c echo.Context) error {
     // "index" refers to the block that I named "index" in the index.html file
