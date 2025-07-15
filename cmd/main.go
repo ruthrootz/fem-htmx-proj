@@ -1,10 +1,13 @@
 package main
 
 import (
-  "html/template"
   "io"
+  "fmt"
+  "html/template"
+  "net/http"
   "strings"
 
+  "golang.org/x/net/html"
   "github.com/labstack/echo/v4"
   "github.com/labstack/echo/v4/middleware"
 )
@@ -25,7 +28,7 @@ func newTemplate() *Templates {
 
 type Link struct {
   Url string
-  PageName string
+  Title string
 }
 
 func GetPageTitle(url string) (string, error) {
@@ -103,19 +106,10 @@ func main() {
 
   e.POST("/links", func(c echo.Context) error {
     url := c.FormValue("url")
-    //if !strings.HasPrefix(url, "https://") {
-      //url = "https://" + url
-    //}
-    //if !strings.Contains(url, ".") {
-      //url = url + ".com"
-    //}
     data.Links = append(data.Links, newLink(url))
     return c.Render(200, "list-webpages", data)
   })
 
   e.Logger.Fatal(e.Start(":8080"))
 }
-
-// TODO:
-// - get name of website and use that for display value
 
