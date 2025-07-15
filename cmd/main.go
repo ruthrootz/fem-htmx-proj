@@ -124,7 +124,21 @@ func main() {
   e.Renderer = newTemplate()
 
   data := newData()
-  dbUrl := "libsql://[DATABASE].turso.io?authToken=[TOKEN]"
+
+  dbUrl := os.Getenv("TURSO_URL")
+  fmt.Println(dbUrl)
+  if dbUrl == "" {
+    fmt.Errorf("TURSO_URL environment variable not set")
+    os.Exit(1)
+  }
+  authToken := os.Getenv("TURSO_AUTH_TOKEN")
+  if authToken != "" {
+    dbUrl += "?authToken=" + authToken
+  } else {
+    fmt.Errorf("TURSO_AUTH_TOKEN environment variable not set")
+    os.Exit(1)
+  }
+
   db, err := sql.Open("libsql", dbUrl)
   if err != nil {
     fmt.Fprintf(os.Stderr, "failed to open db %s: %s", dbUrl, err)
