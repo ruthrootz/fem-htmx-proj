@@ -113,3 +113,10 @@ func main() {
   e.Logger.Fatal(e.Start(":8080"))
 }
 
+// TODO:
+// - [ ] create Turso DB
+// - [ ] link project to Turso
+// - [ ] save Links to DB
+// - [ ] add X to each list item
+// - [ ] remove link on X click
+
