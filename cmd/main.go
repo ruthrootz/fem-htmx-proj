@@ -95,7 +95,7 @@ func newData() Data {
 }
 
 func queryLinks(db *sql.DB) []Link  {
-  links := make([]Link, 0)
+  var links []Link
   rows, err := db.Query("SELECT * FROM link")
   if err != nil {
     fmt.Fprintf(os.Stderr, "failed to execute query: %v\n", err)
@@ -106,10 +106,9 @@ func queryLinks(db *sql.DB) []Link  {
     var link Link
     if err := rows.Scan(&link.ID, &link.Url); err != nil {
       fmt.Println("error scanning row:", err)
-      return links
+      continue
     }
-    links = append(links, link)
-    fmt.Println(link.ID, link.Url)
+    links = append(links, newLink(link.Url))
   }
   if err := rows.Err(); err != nil {
     fmt.Println("error during rows iteration:", err)
@@ -133,7 +132,6 @@ func main() {
     os.Exit(1)
   }
   dbUrl := os.Getenv("TURSO_URL")
-  fmt.Println(dbUrl)
   if dbUrl == "" {
     fmt.Errorf("TURSO_URL environment variable not set")
     os.Exit(1)
@@ -151,8 +149,7 @@ func main() {
     os.Exit(1)
   }
   defer db.Close()
-  links := queryLinks(db)
-  data.Links = links
+  data.Links = queryLinks(db)
 
   e.GET("/", func(c echo.Context) error {
     // "index" refers to the block that I named "index" in the index.html file
