@@ -158,12 +158,7 @@ func main() {
 
   e.POST("/links", func(c echo.Context) error {
     url := c.FormValue("url")
-    insertStatement, err := db.Prepare("INSERT INTO link (url) VALUES (?)")
-    if err != nil {
-      fmt.Errorf("failed to prepare insert statement\n")
-    }
-    defer insertStatement.Close()
-    _, err = insertStatement.Exec(url)
+    _, err := db.Exec("INSERT INTO link (url) VALUES (?)", url)
     if err != nil {
       fmt.Errorf("failed to insert new url %s\n", url)
     }
@@ -177,7 +172,9 @@ func main() {
 // TODO:
 // - [x] create Turso DB
 // - [x] link project to Turso
-// - [ ] save Links to DB
+// - [x] save Links to DB
 // - [ ] add X to each list item
 // - [ ] remove link on X click
+// - [ ] write Dockerfile
+// - [ ] host website
 
