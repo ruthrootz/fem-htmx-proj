@@ -86,12 +86,7 @@ type Data struct {
 }
 
 func newData() Data {
-  return Data {
-    Links: []Link {
-      newLink("https://google.com"),
-      newLink("https://hackernews.com"),
-    },
-  }
+  return Data {}
 }
 
 func queryLinks(db *sql.DB) []Link  {
