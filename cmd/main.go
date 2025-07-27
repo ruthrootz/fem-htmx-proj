@@ -13,6 +13,7 @@ import (
   "golang.org/x/net/html"
   "github.com/labstack/echo/v4"
   "github.com/labstack/echo/v4/middleware"
+  "github.com/joho/godotenv"
 )
 
 type Templates struct {
@@ -126,15 +127,19 @@ func main() {
 
   data := newData()
 
-  //dbUrl := os.Getenv("TURSO_URL")
-  dbUrl := "libsql://reading-list-ruthrootz.aws-us-east-2.turso.io"
+  err := godotenv.Load()
+  if err != nil {
+    fmt.Errorf("err loading: %v", err)
+    os.Exit(1)
+  }
+
+  dbUrl := os.Getenv("TURSO_URL")
   fmt.Println(dbUrl)
   if dbUrl == "" {
     fmt.Errorf("TURSO_URL environment variable not set")
     os.Exit(1)
   }
-  //authToken := os.Getenv("TURSO_AUTH_TOKEN")
-  authToken := "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTI1OTcwNTgsImlkIjoiY2ExMmI1MjgtZjEzYS00MTRmLWE3MmQtZDZkZTBjMjEwODExIiwicmlkIjoiMDA0MjQ0MGMtZGE1My00Y2EwLWE3OWQtN2M1NDk5MzQ3NWNjIn0.VjRA-yXrmb_ZC1x-S4m8JIHh1yeFLndq7n7c7fPA07oYGVQHgAaIQpuKWX9OnX96sjtlYBcrPgpP5SOG1y51Dg"
+  authToken := os.Getenv("TURSO_AUTH_TOKEN")
   if authToken != "" {
     dbUrl += "?authToken=" + authToken
   } else {
@@ -148,7 +153,8 @@ func main() {
     os.Exit(1)
   }
   defer db.Close()
-  queryLinks(db)
+  links := queryLinks(db)
+  data.Links = links
 
   e.GET("/", func(c echo.Context) error {
     // "index" refers to the block that I named "index" in the index.html file
