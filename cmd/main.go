@@ -85,10 +85,6 @@ type Data struct {
   Links []Link
 }
 
-func newData() Data {
-  return Data {}
-}
-
 func queryLinks(db *sql.DB) []Link  {
   var links []Link
   rows, err := db.Query("SELECT * FROM link")
@@ -119,7 +115,7 @@ func main() {
   e.Use(middleware.Logger())
   e.Renderer = newTemplate()
 
-  data := newData()
+  data := Data {}
 
   err := godotenv.Load()
   if err != nil {
