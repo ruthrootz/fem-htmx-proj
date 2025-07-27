@@ -132,7 +132,6 @@ func main() {
     fmt.Errorf("err loading: %v", err)
     os.Exit(1)
   }
-
   dbUrl := os.Getenv("TURSO_URL")
   fmt.Println(dbUrl)
   if dbUrl == "" {
@@ -146,7 +145,6 @@ func main() {
     fmt.Errorf("TURSO_AUTH_TOKEN environment variable not set")
     os.Exit(1)
   }
-
   db, err := sql.Open("libsql", dbUrl)
   if err != nil {
     fmt.Fprintf(os.Stderr, "failed to open db %s: %s", dbUrl, err)
@@ -172,7 +170,7 @@ func main() {
 
 // TODO:
 // - [x] create Turso DB
-// - [ ] link project to Turso
+// - [x] link project to Turso
 // - [ ] save Links to DB
 // - [ ] add X to each list item
 // - [ ] remove link on X click
