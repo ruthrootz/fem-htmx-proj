@@ -35,7 +35,7 @@ type Link struct {
   Title string
 }
 
-func GetPageTitle(url string) (string, error) {
+func getPageTitle(url string) (string, error) {
   resp, err := http.Get(url)
   if err != nil {
     return "", fmt.Errorf("failed to make HTTP request: %w", err)
@@ -55,7 +55,7 @@ func GetPageTitle(url string) (string, error) {
       if n.FirstChild != nil {
         title = n.FirstChild.Data
       }
-      return // Found the title, no need to continue traversing
+      return
     }
     for c := n.FirstChild; c != nil; c = c.NextSibling {
       f(c)
@@ -66,7 +66,7 @@ func GetPageTitle(url string) (string, error) {
 }
 
 func newLink(url string) Link {
-  title, err := GetPageTitle(url)
+  title, err := getPageTitle(url)
   if err != nil {
     fmt.Printf("error getting page title: %v\n", err)
     return Link {
@@ -93,19 +93,19 @@ func newData() Data {
   }
 }
 
-func queryLinks(db *sql.DB)  {
+func queryLinks(db *sql.DB) []Link  {
+  links := make([]Link, 0)
   rows, err := db.Query("SELECT * FROM link")
   if err != nil {
     fmt.Fprintf(os.Stderr, "failed to execute query: %v\n", err)
     os.Exit(1)
   }
   defer rows.Close()
-  var links []Link
   for rows.Next() {
     var link Link
     if err := rows.Scan(&link.ID, &link.Url); err != nil {
       fmt.Println("error scanning row:", err)
-      return
+      return links
     }
     links = append(links, link)
     fmt.Println(link.ID, link.Url)
@@ -113,6 +113,7 @@ func queryLinks(db *sql.DB)  {
   if err := rows.Err(); err != nil {
     fmt.Println("error during rows iteration:", err)
   }
+  return links
 }
 
 func main() {
@@ -125,13 +126,15 @@ func main() {
 
   data := newData()
 
-  dbUrl := os.Getenv("TURSO_URL")
+  //dbUrl := os.Getenv("TURSO_URL")
+  dbUrl := "libsql://reading-list-ruthrootz.aws-us-east-2.turso.io"
   fmt.Println(dbUrl)
   if dbUrl == "" {
     fmt.Errorf("TURSO_URL environment variable not set")
     os.Exit(1)
   }
-  authToken := os.Getenv("TURSO_AUTH_TOKEN")
+  //authToken := os.Getenv("TURSO_AUTH_TOKEN")
+  authToken := "eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTI1OTcwNTgsImlkIjoiY2ExMmI1MjgtZjEzYS00MTRmLWE3MmQtZDZkZTBjMjEwODExIiwicmlkIjoiMDA0MjQ0MGMtZGE1My00Y2EwLWE3OWQtN2M1NDk5MzQ3NWNjIn0.VjRA-yXrmb_ZC1x-S4m8JIHh1yeFLndq7n7c7fPA07oYGVQHgAaIQpuKWX9OnX96sjtlYBcrPgpP5SOG1y51Dg"
   if authToken != "" {
     dbUrl += "?authToken=" + authToken
   } else {
