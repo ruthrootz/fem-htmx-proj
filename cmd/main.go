@@ -39,15 +39,15 @@ type Link struct {
 func getPageTitle(url string) (string, error) {
   resp, err := http.Get(url)
   if err != nil {
-    return "", fmt.Errorf("failed to make HTTP request: %w", err)
+    return "", fmt.Errorf("failed to make HTTP request: %w\n", err)
   }
   defer resp.Body.Close()
   if resp.StatusCode != http.StatusOK {
-    return "", fmt.Errorf("received non-OK HTTP status: %d", resp.StatusCode)
+    return "", fmt.Errorf("received non-OK HTTP status: %d\n", resp.StatusCode)
   }
   doc, err := html.Parse(resp.Body)
   if err != nil {
-    return "", fmt.Errorf("failed to parse HTML: %w", err)
+    return "", fmt.Errorf("failed to parse HTML: %w\n", err)
   }
   var title string
   var f func(*html.Node)
@@ -69,7 +69,7 @@ func getPageTitle(url string) (string, error) {
 func newLink(url string) Link {
   title, err := getPageTitle(url)
   if err != nil {
-    fmt.Printf("error getting page title: %v\n", err)
+    fmt.Errorf("error getting page title: %v\n", err)
     return Link {
       Url: url,
       Title: url,
@@ -105,13 +105,13 @@ func queryLinks(db *sql.DB) []Link  {
   for rows.Next() {
     var link Link
     if err := rows.Scan(&link.ID, &link.Url); err != nil {
-      fmt.Println("error scanning row:", err)
+      fmt.Errorf("error scanning row: ", err)
       continue
     }
     links = append(links, newLink(link.Url))
   }
   if err := rows.Err(); err != nil {
-    fmt.Println("error during rows iteration:", err)
+    fmt.Errorf("error during rows iteration: ", err)
   }
   return links
 }
@@ -128,19 +128,19 @@ func main() {
 
   err := godotenv.Load()
   if err != nil {
-    fmt.Errorf("err loading: %v", err)
+    fmt.Errorf("err loading: %v\n", err)
     os.Exit(1)
   }
   dbUrl := os.Getenv("TURSO_URL")
   if dbUrl == "" {
-    fmt.Errorf("TURSO_URL environment variable not set")
+    fmt.Errorf("TURSO_URL environment variable not set\n")
     os.Exit(1)
   }
   authToken := os.Getenv("TURSO_AUTH_TOKEN")
   if authToken != "" {
     dbUrl += "?authToken=" + authToken
   } else {
-    fmt.Errorf("TURSO_AUTH_TOKEN environment variable not set")
+    fmt.Errorf("TURSO_AUTH_TOKEN environment variable not set\n")
     os.Exit(1)
   }
   db, err := sql.Open("libsql", dbUrl)
@@ -158,6 +158,15 @@ func main() {
 
   e.POST("/links", func(c echo.Context) error {
     url := c.FormValue("url")
+    insertStatement, err := db.Prepare("INSERT INTO link (url) VALUES (?)")
+    if err != nil {
+      fmt.Errorf("failed to prepare insert statement\n")
+    }
+    defer insertStatement.Close()
+    _, err = insertStatement.Exec(url)
+    if err != nil {
+      fmt.Errorf("failed to insert new url %s\n", url)
+    }
     data.Links = append(data.Links, newLink(url))
     return c.Render(200, "list-webpages", data)
   })
