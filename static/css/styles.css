@@ -1,28 +1,28 @@
 body {
-    font-family: "Azeret Mono", monospace;
+  font-family: "Azeret Mono", monospace;
 }
 
-wa-input, wa-button {
-    margin: 1%;
+wa-input,
+wa-button {
+  margin: 1%;
 }
 
 wa-card {
-    width: 90%;
-    margin: auto;
-    margin-top: 5%;
-    margin-bottom: 5%;
-    display: block;
-    text-align: center;
+  width: 90%;
+  margin: auto;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  display: block;
+  text-align: center;
 }
 
 .htmx-indicator {
-    opacity:0;
-    transition: opacity 500ms ease-in;
+  opacity: 0;
+  transition: opacity 500ms ease-in;
 }
-.htmx-request .htmx-indicator{
-    opacity:1
+.htmx-request .htmx-indicator {
+  opacity: 1;
 }
-.htmx-request.htmx-indicator{
-    opacity:1
+.htmx-request.htmx-indicator {
+  opacity: 1;
 }
-
