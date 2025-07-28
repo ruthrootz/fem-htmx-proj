@@ -44,7 +44,9 @@
     {{ range .Links }}
     <div>
       <a href="{{ .Url }}" target="_blank">{{ .Title }}</a>
-      <span style="font-size: 1.5em">&times;</span>
+      <span class="close-button" hx-delete="/links" hx-target="#list-and-form"
+        >&times;</span
+      >
     </div>
     {{ end }}
   </div>

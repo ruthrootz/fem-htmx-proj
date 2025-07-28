@@ -157,6 +157,10 @@ func main() {
     return c.Render(200, "list-webpages", data)
   })
 
+  //e.DELETE("/links", func(c echo.Context) error {
+
+  //})
+
   e.Logger.Fatal(e.Start(":8080"))
 }
 
@@ -164,7 +168,7 @@ func main() {
 // - [x] create Turso DB
 // - [x] link project to Turso
 // - [x] save Links to DB
-// - [ ] add X to each list item
+// - [x] add X to each list item
 // - [ ] remove link on X click
 // - [ ] write Dockerfile
 // - [ ] host website

@@ -26,3 +26,7 @@ wa-card {
 .htmx-request.htmx-indicator {
   opacity: 1;
 }
+
+.close-button {
+  font-size: 2em;
+}
