@@ -179,7 +179,3 @@ func main() {
   e.Logger.Fatal(e.Start(":8080"))
 }
 
-// TODO:
-// - [ ] remove link on X click
-// - [ ] host website
-
