@@ -8,6 +8,7 @@ import (
   "strings"
   "database/sql"
   "os"
+  "strconv"
 
   _ "github.com/tursodatabase/libsql-client-go/libsql"
   "golang.org/x/net/html"
@@ -31,7 +32,7 @@ func newTemplate() *Templates {
 }
 
 type Link struct {
-  ID int
+  Id int
   Url string
   Title string
 }
@@ -66,16 +67,18 @@ func getPageTitle(url string) (string, error) {
   return strings.TrimSpace(title), nil
 }
 
-func newLink(url string) Link {
+func newLink(id int, url string) Link {
   title, err := getPageTitle(url)
   if err != nil {
     fmt.Errorf("error getting page title: %v\n", err)
     return Link {
+      Id: id,
       Url: url,
       Title: url,
     }
   }
   return Link {
+    Id: id,
     Url: url,
     Title: title,
   }
@@ -95,11 +98,11 @@ func queryLinks(db *sql.DB) []Link  {
   defer rows.Close()
   for rows.Next() {
     var link Link
-    if err := rows.Scan(&link.ID, &link.Url); err != nil {
+    if err := rows.Scan(&link.Id, &link.Url); err != nil {
       fmt.Errorf("error scanning row: ", err)
       continue
     }
-    links = append(links, newLink(link.Url))
+    links = append(links, newLink(link.Id, link.Url))
   }
   if err := rows.Err(); err != nil {
     fmt.Errorf("error during rows iteration: ", err)
@@ -153,23 +156,30 @@ func main() {
     if err != nil {
       fmt.Errorf("failed to insert new url %s\n", url)
     }
-    data.Links = append(data.Links, newLink(url))
+    data.Links = queryLinks(db)
     return c.Render(200, "list-webpages", data)
   })
 
-  //e.DELETE("/links", func(c echo.Context) error {
-
-  //})
+  e.DELETE("/links/:id", func(c echo.Context) error {
+    idStr := c.Param("id")
+    id, err := strconv.Atoi(idStr)
+    if err != nil {
+      fmt.Errorf("failed to delete link %s\n", idStr)
+      return c.String(400, "invalid id")
+    }
+    _, err = db.Exec("DELETE FROM link WHERE ID == (?)", id)
+    if err != nil {
+      fmt.Errorf("failed to delete link %s\n", idStr)
+      return c.String(400, "invalid id")
+    }
+    data.Links = queryLinks(db)
+    return c.Render(200, "list-webpages", data)
+  })
 
   e.Logger.Fatal(e.Start(":8080"))
 }
 
 // TODO:
-// - [x] create Turso DB
-// - [x] link project to Turso
-// - [x] save Links to DB
-// - [x] add X to each list item
 // - [ ] remove link on X click
-// - [ ] write Dockerfile
 // - [ ] host website
 

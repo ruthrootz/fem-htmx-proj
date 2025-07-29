@@ -36,15 +36,19 @@
 </html>
 {{ end }} {{ block "list-webpages" . }}
 <div id="list-and-form">
-  <form hx-post="/links" hx-target="#list-and-form">
+  <form hx-post="/links" hx-target="#list-and-form" hx-swap="outerHTML">
     <wa-input type="text" name="url"></wa-input>
     <wa-button type="submit">save link</wa-button>
   </form>
   <div id="list">
     {{ range .Links }}
-    <div>
+    <div id="link-{{ .Id }}">
       <a href="{{ .Url }}" target="_blank">{{ .Title }}</a>
-      <span class="close-button" hx-delete="/links" hx-target="#list-and-form"
+      <span
+        class="close-button"
+        hx-delete="/links/{{ .Id }}"
+        hx-target="#list-and-form"
+        hx-swap="outerHTML"
         >&times;</span
       >
     </div>
