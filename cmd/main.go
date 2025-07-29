@@ -118,13 +118,17 @@ func main() {
   e.Use(middleware.Logger())
   e.Renderer = newTemplate()
 
-  data := Data {}
-
   err := godotenv.Load()
   if err != nil {
     fmt.Errorf("err loading: %v\n", err)
     os.Exit(1)
   }
+  port := os.Getenv("PORT")
+  if port == "" {
+    port = "8080"
+  }
+
+  data := Data {}
   dbUrl := os.Getenv("TURSO_URL")
   if dbUrl == "" {
     fmt.Errorf("TURSO_URL environment variable not set\n")
@@ -146,7 +150,6 @@ func main() {
   data.Links = queryLinks(db)
 
   e.GET("/", func(c echo.Context) error {
-    // "index" refers to the block that I named "index" in the index.html file
     return c.Render(200, "index", data)
   })
 
@@ -176,6 +179,6 @@ func main() {
     return c.Render(200, "list-webpages", data)
   })
 
-  e.Logger.Fatal(e.Start(":8080"))
+  e.Logger.Fatal(e.Start(":" + port))
 }
 
